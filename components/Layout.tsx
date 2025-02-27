@@ -1,8 +1,5 @@
-import {useState} from "react";
-import Header from "./Header";
-import Weather from "./Weather";
+import {ReactNode} from "react";
 import "@/app/globals.css";
-import {WeatherResponse} from "@/types/weather";
 import {Geist, Geist_Mono} from "next/font/google";
 import type {Metadata} from "next";
 
@@ -21,17 +18,11 @@ export const metadata: Metadata = {
     description: "App to check weather around the globe",
 };
 
-export default function RootLayout() {
-    const [weather, setWeather] = useState<WeatherResponse | null>(null);
+export default function RootLayout({ children }: {children: ReactNode}) {
 
     return (
-        <div
-            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-            <Header onWeatherFetched={setWeather} />
-            <main>
-                <Weather weather={weather} />
-            </main>
+        <div className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+            <main>{children}</main>
         </div>
     )
 }
