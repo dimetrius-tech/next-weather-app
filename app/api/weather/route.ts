@@ -1,12 +1,14 @@
-import {NextApiRequest, NextApiResponse} from "next";
 import {WeatherResponse} from "@/types/weather";
+import {type NextRequest} from "next/server";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const { city } = req.query;
+export async function GET(req: NextRequest) {
+    const city = req.nextUrl.searchParams.get('city');
     const apiKey = process.env.NEXT_PUBLIC_WEATHER_API_KEY;
 
-    if(!city || typeof city !== 'string') {
-        return res.status(400).json({error: 'City is required'});
+    if(!city) {
+        return new Response('City is required', {
+            status: 400
+        });
     }
 
     try {
@@ -18,8 +20,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             throw new Error("Failed to fetch weather data.");
         }
         const data: WeatherResponse = await response.json();
-        res.status(200).json(data);
+        return Response.json(data, {status: 200});
     } catch (error) {
-        res.status(500).json({error: (error as Error).message});
+        return new Response((error as Error).message, {status: 500})
     }
 }
